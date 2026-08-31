@@ -5,3 +5,4 @@ audio/*.wav
 models/
 outputs/
 datasets/
+data/vector_db/
