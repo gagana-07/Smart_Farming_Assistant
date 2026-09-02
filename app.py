@@ -1,17 +1,30 @@
 import whisper
 import ollama
 import pyttsx3
-import record_audio
+import chromadb
 
 print("Loading Whisper...")
 model = whisper.load_model("base")
 
+# Connect to ChromaDB
+client = chromadb.PersistentClient(path="data/vector_db")
+collection = client.get_collection("agriculture")
+
 print("Transcribing audio...")
+
 result = model.transcribe("audio/input.wav")
+question = result["text"].strip()
 
-query = result["text"].strip()
+print("\nFarmer:")
+print(question)
 
-print("\nFarmer:", query)
+# Search relevant PDF chunks
+results = collection.query(
+    query_texts=[question],
+    n_results=3
+)
+
+context = "\n".join(results["documents"][0])
 
 response = ollama.chat(
     model="llama3.2",
@@ -19,39 +32,47 @@ response = ollama.chat(
         {
             "role": "system",
             "content": """
-You are an agriculture expert.
+You are a smart agriculture assistant.
 
 Rules:
-- Give short and practical answers.
-- Use simple language.
-- Maximum 3 sentences.
-- Do not use bullet points.
-- Do not use symbols like *, -, or •.
-- Focus only on farming advice.
+Answer only the user's farming question.
+Give 5 to 6 short lines.
+Use simple language.
+Provide practical farming advice.
+Do not mention authors.
+Do not mention PDF names.
+Do not mention research papers.
+Do not mention references.
+Do not use bullet points.
+Do not use special symbols.
+If information is not found, say:
+Sorry, I could not find enough information.
 """
         },
         {
             "role": "user",
-            "content": query
+            "content": f"""
+Question:
+{question}
+
+Context:
+{context}
+"""
         }
     ]
 )
 
 answer = response["message"]["content"]
 
-# Clean text for speech
-answer = answer.replace("*", "")
-answer = answer.replace("•", "")
-answer = answer.replace("-", "")
+# Clean answer
+for ch in ["*", "-", "•", "#"]:
+    answer = answer.replace(ch, "")
 
-print("\nAssistant:")
+print("\nAssistant:\n")
 print(answer)
 
-# Text-to-Speech
+# Speak answer
 engine = pyttsx3.init()
-
-# Optional: slow down speech slightly
 engine.setProperty("rate", 170)
-
 engine.say(answer)
 engine.runAndWait()
