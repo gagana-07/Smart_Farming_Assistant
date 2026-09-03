@@ -12,30 +12,34 @@ for filename in os.listdir(pdf_folder):
 
     if filename.endswith(".pdf"):
 
-        pdf_path = os.path.join(pdf_folder, filename)
+        try:
+            pdf_path = os.path.join(pdf_folder, filename)
 
-        print(f"Reading {filename}...")
+            print(f"Reading {filename}...")
 
-        reader = PdfReader(pdf_path)
+            reader = PdfReader(pdf_path)
 
-        text = ""
+            text = ""
 
-        for page in reader.pages:
-            page_text = page.extract_text()
+            for page in reader.pages:
+                extracted = page.extract_text()
 
-            if page_text:
-                text += page_text + "\n"
+                if extracted:
+                    text += extracted + "\n"
 
-        # Split PDF into chunks
-        chunk_size = 1000
+            if len(text.strip()) > 100:
+                collection.add(
+                    documents=[text],
+                    ids=[filename]
+                )
 
-        for i in range(0, len(text), chunk_size):
+                print(f"Added: {filename}")
 
-            chunk = text[i:i + chunk_size]
+            else:
+                print(f"Skipped (no text): {filename}")
 
-            collection.add(
-                documents=[chunk],
-                ids=[f"{filename}_{i}"]
-            )
+        except Exception as e:
+            print(f"Error in {filename}: {e}")
 
-print("All PDFs added successfully!")
+print("Ingestion Complete")
+print("Total Documents:", collection.count())
