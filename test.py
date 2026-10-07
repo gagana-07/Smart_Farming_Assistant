@@ -1,10 +1,14 @@
-import ollama
+import whisper
 
-response = ollama.chat(
-    model="llama3.2",
-    messages=[
-        {"role": "user", "content": "How to grow rice?"}
-    ]
+print("Loading Whisper...")
+
+model = whisper.load_model("medium")
+
+result = model.transcribe(
+    "audio/clean.wav",
+    language="kn",
+    fp16=False
 )
 
-print(response["message"]["content"])
+print("\nDetected Text:")
+print(result["text"])

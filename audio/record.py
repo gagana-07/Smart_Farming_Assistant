@@ -2,7 +2,7 @@ import sounddevice as sd
 from scipy.io.wavfile import write
 
 fs = 16000
-duration = 5
+duration = 10
 
 print("Speak now...")
 

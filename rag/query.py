@@ -8,27 +8,42 @@ client = chromadb.PersistentClient(path="data/vector_db")
 collection = client.get_collection("agriculture")
 
 # Ask question
-question = input("Ask a farming question: ")
+question = input("Ask a farming question: ").strip()
 
-# Retrieve only top 3 results
+if not question:
+    print("Please enter a question.")
+    exit()
+
+# Retrieve top results
 results = collection.query(
     query_texts=[question],
-    n_results=3
+    n_results=5
 )
+
+# Check results
+if (
+    "documents" not in results
+    or not results["documents"]
+    or not results["documents"][0]
+):
+    print("No relevant information found in database.")
+    exit()
 
 # Build context
 context = "\n".join(results["documents"][0])
 
 # Limit context size
 context = context[:1200]
+
 print("\nQUESTION:")
 print(question)
 
 print("\nCONTEXT SENT TO OLLAMA:")
-print(context[:1500])
+print(context)
 
+# Generate answer
 response = ollama.chat(
-    model="llama3.2",
+    model="qwen2.5:3b",
     messages=[
         {
             "role": "system",

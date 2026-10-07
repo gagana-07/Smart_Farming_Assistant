@@ -1,7 +1,7 @@
 import sounddevice as sd
 from scipy.io.wavfile import write
 
-duration = 5
+duration = 10
 sample_rate = 44100
 
 print("Speak now...")

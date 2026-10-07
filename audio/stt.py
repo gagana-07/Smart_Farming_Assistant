@@ -2,14 +2,20 @@ import whisper
 
 print("Loading Whisper model...")
 
-model = whisper.load_model("base")
+# Load model
+model = whisper.load_model("medium")
 
-result = model.transcribe("audio/input.wav")
+# Transcribe Kannada audio
+result = model.transcribe(
+    "audio/recordings/kannada1.wav"
+)
 
+print("Detected Language:", result["language"])
+print("Text:", result["text"])
+# Extract text
 text = result["text"].strip()
 
-print(result)
-
+# Display result
 if len(text) < 2:
     print("No speech detected")
 else:
