@@ -8,6 +8,7 @@ import chromadb
 import soundfile as sf
 import noisereduce as nr
 from faster_whisper import WhisperModel
+from faster_whisper import WhisperModel, decode_audio
 
 from translate import translate
 from audio.tts import speak
@@ -57,22 +58,47 @@ def clean_audio(src, dst):
 # ==========================
 # STEP 2: SPEECH TO TEXT
 # ==========================
-def transcribe(path):
-    segments, info = fw.transcribe(
-        path,
-        beam_size=1,
-        condition_on_previous_text=False,
-    )
-    text = " ".join(s.text for s in segments).strip()
 
-    lang = info.language
-    if any("\u0C80" <= c <= "\u0CFF" for c in text):
-        lang = "kn"
-    elif any("\u0900" <= c <= "\u097F" for c in text):
-        lang = "hi"
-    elif lang not in ("en", "kn", "hi"):
-        lang = "kn"
-    return text, lang
+
+ALLOWED = ["en", "kn", "hi"]
+RANGES = {"kn": ("\u0C80", "\u0CFF"), "hi": ("\u0900", "\u097F")}
+
+
+def looks_valid(text, lang):
+    letters = [c for c in text if c.isalpha()]
+    if len(letters) < 4:
+        return False
+    if lang == "en":
+        return sum(c.isascii() for c in letters) / len(letters) > 0.9
+    lo, hi = RANGES[lang]
+    return sum(lo <= c <= hi for c in letters) / len(letters) > 0.8
+
+
+def transcribe(path):
+    audio = decode_audio(path, sampling_rate=16000)
+
+    # Detect language, but only among English / Kannada / Hindi
+    _, _, all_probs = fw.detect_language(audio)
+    probs = {l: p for l, p in all_probs if l in ALLOWED}
+    for l in ALLOWED:
+        probs.setdefault(l, 0.0)
+    ranked = sorted(probs, key=probs.get, reverse=True)
+    print("Language probabilities:", {l: round(probs[l], 3) for l in ALLOWED})
+
+    # Try the most likely language first. If the output is not valid text
+    # in that language's script, try the next one.
+    for lang in ranked:
+        segments, _ = fw.transcribe(
+            audio,
+            language=lang,
+            beam_size=1,
+            condition_on_previous_text=False,
+        )
+        text = " ".join(s.text for s in segments).strip()
+        if looks_valid(text, lang):
+            return text, lang
+
+    return "", ranked[0]
 
 
 # ==========================

@@ -6,3 +6,4 @@ models/
 outputs/
 datasets/
 data/vector_db/
+data/vector_db_backup/
