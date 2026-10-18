@@ -137,7 +137,7 @@ if (
     exit()
 
 context = "\n".join(results["documents"][0])
-context = context[:1500]
+context = context[:800]
 
 print("\n===================")
 print("CONTEXT RETRIEVED")

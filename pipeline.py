@@ -30,6 +30,8 @@ Give practical farming advice using the context.
 Write numbers and units in words (for example: "fifty kilograms").
 Do not use abbreviations, bullet points, symbols or markdown.
 Answer only the question.
+Do not use words like ring or cultural practices. Say "around the plant".
+Answer only what was asked.
 """
 
 
