@@ -1,19 +1,27 @@
+"""Record a ten-second microphone sample to audio/input.wav."""
+from pathlib import Path
+
 import sounddevice as sd
 from scipy.io.wavfile import write
 
-fs = 16000
-duration = 10
+SAMPLE_RATE = 16000
+DURATION_SECONDS = 10
+OUTPUT = Path("audio/input.wav")
 
-print("Speak now...")
 
-audio = sd.rec(
-    int(duration * fs),
-    samplerate=fs,
-    channels=1
-)
+def main():
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    print(f"Speak now for {DURATION_SECONDS} seconds...")
+    audio = sd.rec(
+        int(DURATION_SECONDS * SAMPLE_RATE),
+        samplerate=SAMPLE_RATE,
+        channels=1,
+        dtype="int16",
+    )
+    sd.wait()
+    write(str(OUTPUT), SAMPLE_RATE, audio)
+    print(f"Recording saved to {OUTPUT.resolve()}")
 
-sd.wait()
 
-write("audio/input.wav", fs, audio)
-
-print("Recording saved successfully!")
+if __name__ == "__main__":
+    main()

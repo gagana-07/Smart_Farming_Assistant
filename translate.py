@@ -4,6 +4,10 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 MODEL_PATH = "models/nllb-200-distilled-600M"
 
+# Dynamic int8 quantization: less memory and faster on CPU, small quality cost.
+# Set to False if crop names or numbers start coming out wrong.
+USE_QUANTIZATION = True
+
 CODES = {
     "en": "eng_Latn",
     "kn": "kan_Knda",
@@ -21,7 +25,7 @@ CODES = {
 EN_TO_KN = [
     ("paddy", "ಧಾನ್ಯ", "ಭತ್ತ"),
     ("field", "ಕ್ಷೇತ್ರ", "ಹೊಲ"),
-    ("ragi", "ರೇಜಿ", "ರಾಗಿ"),
+    ("ragi", r"(?:ರೇಜಿ|ರಾಜಿ|ರಾಜೀ|ರಾಗಿ)", "ರಾಗಿ"),
     ("maize", "ಮಧುಮೇಹ", "ಮೆಕ್ಕೆಜೋಳ"),
     ("tomato", "ಹಣ್ಣಿನ ಸಸ್ಯ", "ಟೊಮೆಟೊ ಗಿಡ"),
     ("sugarcane", "ಸಕ್ಕರೆ ಗಲ್ಲದ", "ಕಬ್ಬಿನ"),
@@ -30,13 +34,15 @@ EN_TO_KN = [
     ("jowar", "ಜವಾರ್", "ಜೋಳ"),
     ("coconut", "ಕೋಕೋಸ್", "ತೆಂಗಿನ"),
     ("chilli", "ಚಿಲ್ಲಿ", "ಮೆಣಸಿನಕಾಯಿ"),
+    ("papaya", r"(?:ಪಪಾಯಾ|ಪಪ್ಪಾಯ|ಪಪ್ಪಾಯಿ)", "ಪಪ್ಪಾಯಿ"),
+    ("plant", "ನೆಟ್ಟಿರಿ", "ನೆಡಿ"),
     ("apply", "ಅನ್ವಯಿಸಿ", "ಹಾಕಿ"),
     ("ask another question", "ಪ್ರಶ್ನೆ ಕೇಳು", "ಪ್ರಶ್ನೆ ಕೇಳಿ"),
 ]
 
 # English answer -> Hindi
 EN_TO_HI = [
-    ("ragi", "रगी", "रागी"),
+    ("ragi", r"(?:रगी|राजी|रागी)", "रागी"),
     ("tomato", "टोमेटो", "टमाटर"),
     ("groundnut", "अखरोट", "मूंगफली"),
     ("areca", "अरेका नट", "सुपारी"),
@@ -87,6 +93,14 @@ def _load():
         print("Loading NLLB translation model...")
         _tok = AutoTokenizer.from_pretrained(MODEL_PATH)
         _model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_PATH).eval()
+        if USE_QUANTIZATION:
+            try:
+                _model = torch.quantization.quantize_dynamic(
+                    _model, {torch.nn.Linear}, dtype=torch.qint8
+                )
+                print("   NLLB quantized to int8.")
+            except Exception as exc:
+                print("   Quantization skipped:", exc)
     return _tok, _model
 
 
@@ -121,7 +135,7 @@ def _apply_fixes(text, out, fixes):
     low = text.lower()
     for trigger, wrong, right in fixes:
         if trigger in low:
-            out = re.sub(wrong, right, out)
+            out = re.sub(wrong, right, out, flags=re.IGNORECASE)
     return out
 
 
@@ -218,6 +232,25 @@ def translate(text, src, tgt):
         return text
     out = _translate_raw(text, src, tgt)
     out = _apply_fixes(text, out, FIXES.get((src, tgt), []))
+    # Robust crop-name normalization for common NLLB variants.
+    if src == "en" and tgt == "kn":
+        source = text.lower()
+        crop_rules = [
+            (r"\\bragi\\b", r"(?:ರೇಜಿ|ರಾಜಿ|ರಾಜೀ|ರಾಗಿ)", "ರಾಗಿ"),
+            (r"\\bpapaya\\b", r"(?:ಪಪಾಯಾ|ಪಪ್ಪಾಯ|ಪಪ್ಪಾಯಿ)", "ಪಪ್ಪಾಯಿ"),
+            (r"\\bpaddy|\\brice\\b", r"(?:ಧಾನ್ಯ|ಭತ್ತ)", "ಭತ್ತ"),
+        ]
+        for trigger, wrong, right in crop_rules:
+            if re.search(trigger, source):
+                out = re.sub(wrong, right, out)
+    elif src == "en" and tgt == "hi":
+        source = text.lower()
+        for trigger, wrong, right in [
+            (r"\\bragi\\b", r"(?:रगी|राजी|रागी)", "रागी"),
+            (r"\\bpapaya\\b", r"(?:पपाया|पपीता|पपिता)", "पपीता"),
+        ]:
+            if re.search(trigger, source):
+                out = re.sub(wrong, right, out)
     if tgt == "en" and src in CROP_WORDS:
         out = _add_crop_hints(text, out, src)
     return out

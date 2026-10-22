@@ -1,0 +1,5 @@
+# Website wrapper dependencies; the AI/model dependencies are already part of your existing project.
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.27,<1.0
+python-multipart>=0.0.9
+Jinja2>=3.1

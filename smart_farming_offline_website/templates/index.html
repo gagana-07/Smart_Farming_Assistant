@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7ef"><title>Smart Farming Assistant</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <section id="login-screen" class="login-screen" aria-label="Account access">
+    <div class="login-card">
+      <div class="login-mark">🌱</div>
+      <p class="section-kicker" data-i18n="loginKicker">SMART FARMING ASSISTANT</p>
+      <div class="auth-tabs"><button type="button" id="show-login" class="auth-tab active" data-i18n="loginTab">Login</button><button type="button" id="show-register" class="auth-tab" data-i18n="registerTab">Register</button></div>
+      <form id="login-form" class="auth-form">
+        <h1 data-i18n="loginTitle">Welcome back</h1>
+        <p class="login-subtitle" data-i18n="loginSubtitle">Sign in to open your offline farming assistant.</p>
+        <label for="login-username" data-i18n="usernameLabel">Username</label>
+        <input id="login-username" autocomplete="username" required minlength="3" maxlength="30" placeholder="Enter username">
+        <label for="login-password" data-i18n="passwordLabel">Password</label>
+        <input id="login-password" type="password" autocomplete="current-password" required minlength="8" maxlength="128" placeholder="Enter password">
+        <button type="submit" class="ask-button login-submit" data-i18n="loginButton">Sign in</button>
+      </form>
+      <form id="register-form" class="auth-form hidden">
+        <h1 data-i18n="registerTitle">Create your account</h1>
+        <p class="login-subtitle" data-i18n="registerSubtitle">Register once to use your local farming assistant.</p>
+        <label for="register-name" data-i18n="fullNameLabel">Full name</label>
+        <input id="register-name" autocomplete="name" required maxlength="80" placeholder="Enter your name">
+        <label for="register-username" data-i18n="usernameLabel">Username</label>
+        <input id="register-username" autocomplete="username" required minlength="3" maxlength="30" pattern="[A-Za-z0-9_.-]+" placeholder="Choose a username">
+        <label for="register-password" data-i18n="passwordLabel">Password</label>
+        <input id="register-password" type="password" autocomplete="new-password" required minlength="8" maxlength="128" placeholder="At least 8 characters">
+        <label for="register-confirm" data-i18n="confirmPasswordLabel">Confirm password</label>
+        <input id="register-confirm" type="password" autocomplete="new-password" required minlength="8" maxlength="128" placeholder="Re-enter password">
+        <label for="register-language" data-i18n="languageLabel">Interface language</label>
+        <select id="register-language"><option value="kn">ಕನ್ನಡ</option><option value="hi">हिन्दी</option><option value="en">English</option></select>
+        <button type="submit" class="ask-button login-submit" data-i18n="registerButton">Create account</button>
+      </form>
+      <p id="login-error" class="login-error" role="alert" aria-live="polite"></p>
+      <label for="login-language" data-i18n="languageLabel">Interface language</label>
+      <select id="login-language" aria-label="Interface language"><option value="kn">ಕನ್ನಡ</option><option value="hi">हिन्दी</option><option value="en">English</option></select>
+      <p class="login-note" data-i18n="accountNote">Accounts are stored locally on this computer. Do not use a password you use elsewhere.</p>
+    </div>
+  </section>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Smart Farming Assistant home">
+        <span class="brand-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M39 7C22 7 10 14 10 27c0 7 5 12 12 12C36 39 40 22 39 7Z" fill="currentColor"/><path d="M8 41c8-12 14-17 25-25" fill="none" stroke="#f8fbf3" stroke-width="2.5" stroke-linecap="round"/><path d="M21 30c-1-5-1-9 0-13M27 24c4 0 7 1 9 3" fill="none" stroke="#f8fbf3" stroke-width="2" stroke-linecap="round"/></svg></span>
+        <span><strong>FarmWise</strong><small>SMART FARMING ASSISTANT</small></span>
+      </a>
+      <div class="topbar-right"><span class="offline-pill"><i></i> Runs locally</span><span class="topbar-divider"></span><span class="topbar-note">Your farm. Your language.</span><button id="logout-button" class="logout-button" type="button" data-i18n="logoutButton">Log out</button></div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="sun-icon">✳</span> LOCAL KNOWLEDGE · REAL FARMING</div>
+          <h1>Better decisions<br>start <em>with a question.</em></h1>
+          <p>Ask about crops, soil, sowing, and plant care in Kannada, Hindi, or English. Your assistant works with locally stored AI models and farming knowledge.</p>
+          <div class="hero-points"><span><b>✓</b> Three languages</span><span><b>✓</b> Voice or text</span><span><b>✓</b> Offline-ready</span></div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="art-sun"></div><div class="art-cloud cloud-one"></div><div class="art-cloud cloud-two"></div>
+          <svg class="farm-illustration" viewBox="0 0 520 300" role="img">
+            <path d="M0 196 Q90 135 180 184 T350 167 T520 180V300H0Z" fill="#c9d9a7"/>
+            <path d="M0 228 Q100 178 200 222 T390 209 T520 214V300H0Z" fill="#a9c27c"/>
+            <path d="M0 259 Q110 220 220 254 T420 248 T520 250V300H0Z" fill="#77985a"/>
+            <g stroke="#f3e8c7" stroke-width="2" opacity=".9" fill="none"><path d="M50 300Q110 250 168 228"/><path d="M95 300Q150 253 204 235"/><path d="M145 300Q188 266 240 243"/><path d="M520 274Q446 232 390 222"/><path d="M520 296Q458 254 408 240"/></g>
+            <g transform="translate(278 64)"><path d="M-5 183Q1 109 8 28" stroke="#6c8b45" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M3 126Q-60 109-75 66Q-29 62 3 104Z" fill="#6d994d"/><path d="M5 94Q50 75 64 35Q23 30 7 72Z" fill="#4c7f3e"/><path d="M0 70Q-31 50-29 13Q8 24 7 59Z" fill="#8eae5a"/><path d="M4 150Q48 130 68 97Q28 87 5 126Z" fill="#3d7139"/><path d="M-3 163Q-44 150-58 120Q-24 111-1 145Z" fill="#5e8b43"/></g>
+            <g transform="translate(370 119)"><path d="M0 131V34" stroke="#5c7d3d" stroke-width="5" stroke-linecap="round"/><path d="M0 80Q-40 66-48 35Q-15 35 0 61Z" fill="#7ba652"/><path d="M0 60Q31 44 39 14Q12 15 0 41Z" fill="#4f843f"/><path d="M0 106Q34 93 45 68Q16 65 0 90Z" fill="#6d994d"/></g>
+            <g transform="translate(155 157)"><path d="M0 95V35" stroke="#638242" stroke-width="4" stroke-linecap="round"/><path d="M0 62Q-30 53-35 28Q-10 28 0 49Z" fill="#6c9848"/><path d="M0 47Q22 37 29 14Q9 14 0 32Z" fill="#4d7c3c"/></g>
+            <g fill="#e7b85f"><circle cx="278" cy="58" r="4"/><circle cx="270" cy="48" r="4"/><circle cx="282" cy="43" r="4"/><circle cx="291" cy="51" r="4"/></g>
+            <g transform="translate(75 147)"><path d="M0 62V20" stroke="#718b4e" stroke-width="3"/><path d="M0 41Q-21 35-24 17Q-7 17 0 30Z" fill="#668d45"/><path d="M0 31Q16 24 20 8Q5 8 0 20Z" fill="#83a954"/></g>
+          </svg>
+          <div class="art-label"><span class="label-dot"></span><span><strong>Rooted in local knowledge</strong><small>Made for everyday farming</small></span></div>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="Ask the farming assistant">
+        <div class="ask-panel panel">
+          <div class="panel-heading"><div><span class="section-kicker">YOUR FARMING HELPER</span><h2>What would you like to know?</h2></div><span class="leaf-badge">✦</span></div>
+          <label class="field-label" for="language">Choose your language</label>
+          <div class="language-select-wrap"><span class="language-symbol">文</span><select id="language" aria-label="Choose language"><option value="kn">ಕನ್ನಡ · Kannada</option><option value="hi">हिन्दी · Hindi</option><option value="en">English</option></select><span class="select-chevron">⌄</span></div>
+          <div class="question-box"><label class="field-label" for="question">Type your question</label><textarea id="question" rows="3" placeholder="ಉದಾ: ಭತ್ತಕ್ಕೆ ಯಾವ ಗೊಬ್ಬರ ಹಾಕಬೇಕು?" spellcheck="false"></textarea><div class="question-footer"><span id="char-count">0 / 500</span><span>Ask one question at a time</span></div></div>
+          <div class="action-row"><button class="ask-button" id="ask-button"><span>Get farming advice</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="mic-button" id="mic-button" title="Record a voice question"><span class="mic-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3m-4 0h8"/></svg></span><span id="mic-label">Ask by voice</span></button></div>
+          <p class="mic-status" id="mic-status" role="status">Voice recording is processed by your local Python models.</p>
+          <div class="suggestions"><span class="suggestion-title">TRY ASKING</span><div class="suggestion-chips"><button class="chip" data-q-kn="ಭತ್ತಕ್ಕೆ ಯಾವ ಗೊಬ್ಬರ ಹಾಕಬೇಕು?" data-q-hi="गेहूँ की फसल के लिए कौन सी खाद अच्छी है?" data-q-en="Which fertilizer is suitable for wheat?">🌾 Fertilizer advice</button><button class="chip" data-q-kn="ಮೆಕ್ಕೆಜೋಳ ಯಾವಾಗ ಬಿತ್ತಬೇಕು?" data-q-hi="मक्का कब बोना चाहिए?" data-q-en="When should I sow maize?">🌱 Sowing time</button><button class="chip" data-q-kn="ಟೊಮೆಟೊ ಗಿಡಕ್ಕೆ ಕೀಟ ಬಂದರೆ ಏನು ಮಾಡಬೇಕು?" data-q-hi="टमाटर के पौधे में कीड़े लगें तो क्या करें?" data-q-en="How can I control pests in tomato?">🍅 Plant pests</button></div></div>
+        </div>
+
+        <div class="answer-panel panel" id="answer-panel">
+          <div class="answer-top"><div><span class="section-kicker">YOUR ADVISORY</span><h2>Advice for your field</h2></div><span class="answer-status" id="answer-status"><i></i> Ready</span></div>
+          <div class="empty-state" id="empty-state"><div class="empty-illustration"><svg viewBox="0 0 180 150" aria-hidden="true"><ellipse cx="90" cy="130" rx="63" ry="9" fill="#e6ead9"/><path d="M90 123V42" stroke="#63894a" stroke-width="5" stroke-linecap="round"/><path d="M90 86Q43 79 39 43Q73 43 90 68Z" fill="#6b9a50"/><path d="M90 67Q130 60 139 27Q106 28 90 50Z" fill="#8bb76a"/><path d="M90 107Q123 98 128 76Q103 77 90 94Z" fill="#4e7f3e"/><path d="M90 123Q63 114 58 97Q78 94 90 108Z" fill="#a6c782"/><path d="M62 122l-12 8m38-7 10 9m-20-8-2 10" stroke="#b6a17a" stroke-width="2" stroke-linecap="round"/><circle cx="132" cy="42" r="12" fill="#f0c77b" opacity=".85"/><path d="M132 23v-5m0 48v-5m-19-19h-5m48 0h-5m-33-13-4-4m36 36-4-4m0-28 4-4m-36 36 4-4" stroke="#e6b35e" stroke-width="2" stroke-linecap="round"/></svg></div><h3>Your answer will grow here</h3><p>Ask a question about your crop. Your assistant will find relevant local farming information and respond in your selected language.</p><div class="empty-tags"><span>Crop care</span><span>Soil health</span><span>Sowing advice</span></div></div>
+          <div class="answer-content hidden" id="answer-content"><div class="recognized-question"><span class="mini-icon">↳</span><div><small>QUESTION UNDERSTOOD AS</small><p id="recognized-question"></p></div></div><div class="answer-divider"></div><div class="answer-body"><span class="answer-leaf">✦</span><div><span class="answer-label">FARMING ADVICE</span><p id="answer-text" aria-live="polite"></p></div></div><div class="answer-tools"><button id="play-answer" class="tool-button" disabled><span>▶</span> Listen to answer</button><button id="copy-answer" class="tool-button"><span>▣</span> Copy answer</button><span class="local-source"><i></i> Local AI + knowledge base</span></div><audio id="answer-audio" class="hidden" controls></audio></div>
+          <div class="loading-state hidden" id="loading-state"><div class="loader-plant"><span></span><span></span><span></span></div><h3 id="loading-title">Thinking through your question…</h3><p id="loading-detail">Searching your local farming knowledge.</p><div class="loading-steps"><span class="active">Understand</span><span>Find advice</span><span>Prepare answer</span></div></div>
+          <div class="error-state hidden" id="error-state"><div class="error-icon">!</div><h3>We couldn't finish that request</h3><p id="error-text"></p><button id="retry-button" class="text-button">Try again ↗</button></div>
+        </div>
+      </section>
+
+      <section class="knowledge-strip"><div class="strip-heading"><span class="section-kicker">BUILT AROUND YOUR NEEDS</span><h2>Practical help, rooted in the field.</h2></div><div class="knowledge-cards"><article class="knowledge-card"><span class="knowledge-icon icon-seed">✿</span><div><h3>Crop guidance</h3><p>Sowing windows, crop growth, and seasonal practices.</p></div><span class="card-number">01</span></article><article class="knowledge-card"><span class="knowledge-icon icon-soil">⌁</span><div><h3>Soil & nutrition</h3><p>Understand fertilizer and soil-care questions.</p></div><span class="card-number">02</span></article><article class="knowledge-card"><span class="knowledge-icon icon-leaf">❧</span><div><h3>Plant care</h3><p>Get help with common pest and plant-health concerns.</p></div><span class="card-number">03</span></article></div></section>
+    </main>
+    <footer><div class="footer-brand"><span class="footer-leaf">❧</span> FarmWise</div><p>Designed for farmers. Runs on your local computer.</p><span class="footer-status"><i></i> Offline-first experience</span></footer>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
